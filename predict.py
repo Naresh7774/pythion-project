@@ -5,13 +5,19 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
+# Setup NLTK data path for Vercel (/tmp is writable)
+nltk_data_dir = '/tmp/nltk_data'
+if not os.path.exists(nltk_data_dir):
+    os.makedirs(nltk_data_dir)
+nltk.data.path.append(nltk_data_dir)
+
 # Ensure nltk packages are available silently
 try:
     nltk.data.find('corpora/stopwords')
     nltk.data.find('corpora/wordnet')
 except LookupError:
-    nltk.download('stopwords', quiet=True)
-    nltk.download('wordnet', quiet=True)
+    nltk.download('stopwords', download_dir=nltk_data_dir, quiet=True)
+    nltk.download('wordnet', download_dir=nltk_data_dir, quiet=True)
 
 stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
@@ -26,31 +32,38 @@ def preprocess_text(text):
     return ' '.join(words)
 
 class FakeNewsPredictor:
-    def __init__(self, model_path="models/best_model.pkl", vectorizer_path="models/tfidf_vectorizer.pkl"):
-        self.model_path = model_path
-        self.vectorizer_path = vectorizer_path
+    def __init__(self, model_name="best_model.pkl", vectorizer_name="tfidf_vectorizer.pkl"):
+        # Resolve absolute paths relative to this file's location
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        self.model_path = os.path.join(base_dir, "models", model_name)
+        self.vectorizer_path = os.path.join(base_dir, "models", vectorizer_name)
+        
         self.model = None
         self.vectorizer = None
         self._load_models()
 
     def _load_models(self):
         if not os.path.exists(self.model_path) or not os.path.exists(self.vectorizer_path):
+            print(f"DEBUG: Paths not found: {self.model_path} or {self.vectorizer_path}")
             return False
 
-        with open(self.model_path, 'rb') as f:
-            self.model = pickle.load(f)
-        
-        with open(self.vectorizer_path, 'rb') as f:
-            self.vectorizer = pickle.load(f)
+        try:
+            with open(self.model_path, 'rb') as f:
+                self.model = pickle.load(f)
             
-        return True
+            with open(self.vectorizer_path, 'rb') as f:
+                self.vectorizer = pickle.load(f)
+            return True
+        except Exception as e:
+            print(f"DEBUG: Error loading models: {str(e)}")
+            return False
 
     def is_model_loaded(self):
         return self.model is not None and self.vectorizer is not None
 
     def predict(self, text):
         if not self.is_model_loaded():
-            raise Exception("Model or vectorizer not found. Please run train_model.py first.")
+            raise Exception(f"Model or vectorizer not found at {self.model_path}. Please ensure models are trained and pushed.")
             
         if not text.strip():
             raise ValueError("Input text cannot be empty.")
@@ -87,4 +100,4 @@ if __name__ == "__main__":
         print(f"Testing with text: '{test_text}'")
         print(predictor.predict(test_text))
     else:
-        print("Model not found. Run train_model.py first.")
+        print("Model not found locally.")

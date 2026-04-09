@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI News Authenticator | Premium Fake News Detection</title>
+    <meta name="description" content="Advanced machine learning tool to detect fake news articles with high confidence.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-decor blur-1"></div>
+    <div class="background-decor blur-2"></div>
+    
+    <main class="container">
+        <header class="hero">
+            <h1>📰 AI News <span class="gradient-text">Authenticator</span></h1>
+            <p class="subtitle">Leveraging state-of-the-art Natural Language Processing to verify the integrity of information in real-time.</p>
+        </header>
+
+        <section class="input-section">
+            <div class="card glass">
+                <label for="newsInput">Article Content</label>
+                <textarea id="newsInput" placeholder="Paste the news article text here for deep analysis..."></textarea>
+                <div class="controls">
+                    <button id="predictBtn" class="primary-btn">
+                        <span class="btn-text">Analyze Authenticity</span>
+                        <div class="loader" id="loader"></div>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="resultSection" class="result-section hidden">
+            <div id="resultCard" class="card result-card">
+                <div class="result-header">
+                    <h2 id="predictionTitle">ANALYSIS COMPLETE</h2>
+                    <div class="confidence-badge">
+                        Confidence: <span id="confidenceValue">0</span>%
+                    </div>
+                </div>
+                <p id="resultMessage" class="result-message"></p>
+                <div class="progress-container">
+                    <div id="confidenceBar" class="progress-bar"></div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2024 AI News Authenticator. Powered by Scikit-learn & Flask. Designed for Excellence.</p>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
